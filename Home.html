@@ -25,7 +25,7 @@
             background-color: #fff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .post img {
+        .post img, .post video {
             max-width: 100%;
             height: auto;
             margin-top: 10px;
@@ -111,14 +111,9 @@
     </style>
 </head>
 <body>
-    <header class="header">
-        <!-- Кнопка "Назад" -->
-        <button class="back-button" onclick="window.history.back()">
-            ← Назад
-        </button>
-    
-        
-    </header>
+    <button class="back-button" onclick="window.history.back()">
+        ← Назад
+    </button>
     <!-- Форма входа для администратора -->
     <div id="adminLogin">
         <h2>Вход для администратора</h2>
@@ -131,7 +126,9 @@
     <div id="addPostForm" class="hidden">
         <h2>Добавить новый пост</h2>
         <textarea id="postContent" placeholder="Введите текст поста"></textarea>
-        <input type="text" id="postImage" placeholder="Ссылка на изображение">
+        <input type="text" id="postImageUrl" placeholder="Ссылка на изображение/видео">
+        <p>Или загрузите файл:</p>
+        <input type="file" id="postFile" accept="image/*, video/*">
         <button onclick="createPost()">Опубликовать</button>
     </div>
 
@@ -156,13 +153,22 @@
         }
 
         // Создание нового поста
-        function createPost() {
+        async function createPost() {
             const content = document.getElementById('postContent').value;
-            const imageUrl = document.getElementById('postImage').value;
-            
+            const imageUrl = document.getElementById('postImageUrl').value;
+            const fileInput = document.getElementById('postFile');
+            let fileData = null;
+
+            // Если файл загружен
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileData = await convertFileToBase64(file);
+            }
+
             const post = {
                 content: content,
-                image: imageUrl,
+                imageUrl: imageUrl,
+                fileData: fileData,
                 date: new Date().toLocaleString()
             };
 
@@ -173,10 +179,21 @@
 
             // Очищаем поля формы
             document.getElementById('postContent').value = '';
-            document.getElementById('postImage').value = '';
+            document.getElementById('postImageUrl').value = '';
+            document.getElementById('postFile').value = '';
 
             // Обновляем ленту
             loadPosts();
+        }
+
+        // Преобразование файла в base64
+        function convertFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = (error) => reject(error);
+            });
         }
 
         // Удаление поста
@@ -201,9 +218,25 @@
             posts.forEach((post, index) => {
                 const postElement = document.createElement('div');
                 postElement.className = 'post';
+                let mediaContent = '';
+
+                if (post.fileData) {
+                    if (post.fileData.startsWith('data:image')) {
+                        mediaContent = `<img src="${post.fileData}" alt="Загруженное изображение">`;
+                    } else if (post.fileData.startsWith('data:video')) {
+                        mediaContent = `<video controls><source src="${post.fileData}" type="${post.fileData.split(';')[0].split(':')[1]}"></video>`;
+                    }
+                } else if (post.imageUrl) {
+                    if (post.imageUrl.match(/\.(jpeg|jpg|gif|png)$/)) {
+                        mediaContent = `<img src="${post.imageUrl}" alt="Изображение поста">`;
+                    } else if (post.imageUrl.match(/\.(mp4|webm|ogg)$/)) {
+                        mediaContent = `<video controls><source src="${post.imageUrl}" type="video/${post.imageUrl.split('.').pop()}"></video>`;
+                    }
+                }
+
                 postElement.innerHTML = `
                     <p>${post.content}</p>
-                    ${post.image ? `<img src="${post.image}" alt="Изображение поста">` : ''}
+                    ${mediaContent}
                     <small>Опубликовано: ${post.date}</small>
                     ${isAdmin ? `<button class="delete-btn" onclick="deletePost(${index})">Удалить</button>` : ''}
                 `;
