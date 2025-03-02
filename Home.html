@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-блог</title>
+    <style>
+        /* Основные стили */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .hidden {
+            display: none;
+        }
+        .post {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            position: relative;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .post img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        form {
+            margin-bottom: 30px;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .delete-btn {
+            background: #ff4d4d;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        .delete-btn:hover {
+            background: #e60000;
+        }
+
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .post {
+                padding: 10px;
+            }
+            form {
+                padding: 15px;
+            }
+            input, textarea {
+                font-size: 14px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .delete-btn {
+                top: 5px;
+                right: 5px;
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+        }
+
+        /* Адаптивность для очень маленьких экранов */
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 20px;
+            }
+            .post {
+                margin-bottom: 15px;
+            }
+            form {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <!-- Кнопка "Назад" -->
+        <button class="back-button" onclick="window.history.back()">
+            ← Назад
+        </button>
+    
+        
+    </header>
+    <!-- Форма входа для администратора -->
+    <div id="adminLogin">
+        <h2>Вход для администратора</h2>
+        <input type="password" id="adminPassword" placeholder="Введите пароль">
+        <button onclick="checkAdmin()">Войти</button>
+        <p id="loginStatus"></p>
+    </div>
+
+    <!-- Форма добавления поста (скрыта по умолчанию) -->
+    <div id="addPostForm" class="hidden">
+        <h2>Добавить новый пост</h2>
+        <textarea id="postContent" placeholder="Введите текст поста"></textarea>
+        <input type="text" id="postImage" placeholder="Ссылка на изображение">
+        <button onclick="createPost()">Опубликовать</button>
+    </div>
+
+    <!-- Контейнер для постов -->
+    <div id="postsContainer"></div>
+
+    <script>
+        let isAdmin = false; // Флаг, указывающий, вошел ли администратор
+
+        // Проверка пароля администратора
+        function checkAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            // Здесь должен быть настоящий пароль, в реальном проекте хранить в localStorage небезопасно!
+            if(password === "admin123") {
+                isAdmin = true; // Администратор вошел
+                document.getElementById('adminLogin').classList.add('hidden');
+                document.getElementById('addPostForm').classList.remove('hidden');
+                loadPosts(); // Перезагружаем посты, чтобы показать кнопки удаления
+            } else {
+                document.getElementById('loginStatus').textContent = "Неверный пароль!";
+            }
+        }
+
+        // Создание нового поста
+        function createPost() {
+            const content = document.getElementById('postContent').value;
+            const imageUrl = document.getElementById('postImage').value;
+            
+            const post = {
+                content: content,
+                image: imageUrl,
+                date: new Date().toLocaleString()
+            };
+
+            // Сохраняем посты в localStorage
+            let posts = JSON.parse(localStorage.getItem('posts')) || [];
+            posts.unshift(post);
+            localStorage.setItem('posts', JSON.stringify(posts));
+
+            // Очищаем поля формы
+            document.getElementById('postContent').value = '';
+            document.getElementById('postImage').value = '';
+
+            // Обновляем ленту
+            loadPosts();
+        }
+
+        // Удаление поста
+        function deletePost(index) {
+            if (!isAdmin) {
+                alert("Только администратор может удалять посты!");
+                return;
+            }
+            let posts = JSON.parse(localStorage.getItem('posts')) || [];
+            posts.splice(index, 1); // Удаляем пост по индексу
+            localStorage.setItem('posts', JSON.stringify(posts));
+            loadPosts(); // Обновляем ленту
+        }
+
+        // Загрузка постов
+        function loadPosts() {
+            const postsContainer = document.getElementById('postsContainer');
+            postsContainer.innerHTML = '';
+            
+            const posts = JSON.parse(localStorage.getItem('posts')) || [];
+            
+            posts.forEach((post, index) => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post';
+                postElement.innerHTML = `
+                    <p>${post.content}</p>
+                    ${post.image ? `<img src="${post.image}" alt="Изображение поста">` : ''}
+                    <small>Опубликовано: ${post.date}</small>
+                    ${isAdmin ? `<button class="delete-btn" onclick="deletePost(${index})">Удалить</button>` : ''}
+                `;
+                postsContainer.appendChild(postElement);
+            });
+        }
+
+        // Инициализация при загрузке страницы
+        window.onload = loadPosts;
+    </script>
+</body>
+</html>
