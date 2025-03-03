@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Lectures.css">
+    <link rel="icon" type="image/x-icon" href="https://avatars.mds.yandex.net/get-mpic/11763878/2a0000018b28f88a0fddeee61759cef27a61/orig">
+    <title>Лекции по мехатронике</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Шапка сайта -->
+    <header class="site-header">
+        <div class="container">
+            <!-- Логотип с анимацией -->
+            <div class="logo">
+                <img src="https://avatars.mds.yandex.net/get-mpic/11763878/2a0000018b28f88a0fddeee61759cef27a61/orig" alt="Логотип" class="logo-img">
+               <a href="index.html"><span class="logo-text">Мехатроника</span></a>
+            </div>
+        </div>
+        <!-- Чат-бот -->
+<div id="chat-container">
+    <div id="chat-header">
+        <span>Чат-бот</span>
+        <button id="close-chat">×</button>
+    </div>
+    <div id="chat-box">
+        <div id="chat-messages"></div>
+    </div>
+    <div id="chat-input-container">
+        <input type="text" id="chat-input" placeholder="Напишите сообщение...">
+        <button id="send-button">Отправить</button>
+    </div>
+</div>
+<button id="open-chat">💬 Открыть чат</button>
+<script>
+    // URL и API-ключ DeepSeek
+    const deepseekApiUrl = "https://platform.deepseek.com/api_keys"; // Например, https://api.deepseek.com/v1/chat
+    const apiKey = "sk-e76d4254de824dabb07c8003f82c4335"; // Если требуется
+
+    // Элементы интерфейса
+    const chatContainer = document.getElementById("chat-container");
+    const openChatButton = document.getElementById("open-chat");
+    const closeChatButton = document.getElementById("close-chat");
+    const chatMessages = document.getElementById("chat-messages");
+    const chatInput = document.getElementById("chat-input");
+    const sendButton = document.getElementById("send-button");
+
+    // Открыть/закрыть чат
+    openChatButton.addEventListener("click", () => {
+        chatContainer.style.display = "flex";
+        openChatButton.style.display = "none";
+    });
+
+    closeChatButton.addEventListener("click", () => {
+        chatContainer.style.display = "none";
+        openChatButton.style.display = "block";
+    });
+
+    // Отправка сообщения
+    sendButton.addEventListener("click", async () => {
+        const userMessage = chatInput.value.trim();
+        if (userMessage) {
+            addMessage(userMessage, "user");
+            chatInput.value = "";
+
+            // Отправка запроса к DeepSeek
+            const botResponse = await getBotResponse(userMessage);
+            addMessage(botResponse, "bot");
+        }
+    });
+
+    // Добавление сообщения в чат
+    function addMessage(text, sender) {
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("message", `${sender}-message`);
+        messageElement.textContent = text;
+        chatMessages.appendChild(messageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Запрос к DeepSeek API
+    async function getBotResponse(userMessage) {
+        try {
+            const response = await fetch(deepseekApiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}` // Если требуется
+                },
+                body: JSON.stringify({
+                    prompt: userMessage, // Текст запроса
+                    max_tokens: 150, // Максимальное количество токенов в ответе
+                    temperature: 0.7 // Параметр "творчества" ответа
+                })
+            });
+
+            const data = await response.json();
+            return data.choices[0].text; // Предполагаем, что ответ возвращается в таком формате
+        } catch (error) {
+            console.error("Ошибка при запросе к DeepSeek:", error);
+            return "Произошла ошибка. Пожалуйста, попробуйте позже.";
+        }
+    }
+</script>
+
+        <!-- Анимированный текст -->
+        <div class="header-animation">
+            
+            <h1 class="animated-text">Добро пожаловать на LectureX!</h1>
+        </div>
+    </header>
+    <section id="lectures" class="lectures-section">
+        <div class="container">
+            <h2>Лекции</h2>
+            <div class="lectures-buttons">
+                <a href="https://telegra.ph/Matematika-02-24-7" class="lecture-button">
+                    <span class="lecture-icon">📘</span>
+                    <span class="lecture-title">Лекция по математике</span>
+                </a>
+                <a href="https://telegra.ph/Materialovedene-02-24" class="lecture-button">
+                    <span class="lecture-icon">🔧</span>
+                    <span class="lecture-title">Лекция по метрологии</span>
+                </a>
+                <a href="pdf/лекции эрт колледж.pdf" class="lecture-button">
+                    <span class="lecture-icon">🤖</span>
+                    <span class="lecture-title">Лекция по электротехнике</span>
+                </a>
+                <a href="pdf/Основы микроэлектроники.pdf" class="lecture-button">
+                    <span class="lecture-icon">💡</span>
+                    <span class="lecture-title">Лекция по микроэлектронике</span>
+                </a>
+                <a href="" class="lecture-button">
+                    <span class="lecture-icon">📊</span>
+                    <span class="lecture-title">Лекция 5</span>
+                </a>
+                <a href="#lecture6" class="lecture-button">
+                    <span class="lecture-icon">⚙️</span>
+                    <span class="lecture-title">Лекция 6</span>
+                </a>
+                <a href="#lecture7" class="lecture-button">
+                    <span class="lecture-icon">📚</span>
+                    <span class="lecture-title">Лекция 7</span>
+                </a>
+                <a href="#lecture8" class="lecture-button">
+                    <span class="lecture-icon">🧠</span>
+                    <span class="lecture-title">Лекция 8</span>
+                </a>
+                <a href="#lecture9" class="lecture-button">
+                    <span class="lecture-icon">🚀</span>
+                    <span class="lecture-title">Лекция 9</span>
+                </a>
+                <a href="#lecture10" class="lecture-button">
+                    <span class="lecture-icon">🎓</span>
+                    <span class="lecture-title">Лекция 10</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

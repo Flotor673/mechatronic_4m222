@@ -1,0 +1,78 @@
+/* Стили для секции публикации */
+.publish-section {
+    padding: 40px 0;
+    background-color: #f9f9f9;
+}
+
+.publish-form {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.publish-form input,
+.publish-form textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.publish-form textarea {
+    resize: vertical;
+}
+
+.publish-form input[type="file"] {
+    padding: 5px;
+}
+
+.publish-form button {
+    background-color: #ff6347;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.publish-form button:hover {
+    background-color: #e5533d;
+}
+
+/* Стили для контейнера с публикациями */
+.posts-container {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Стили для отдельной публикации */
+.post {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post img {
+    max-width: 100%;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.post h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #333;
+}
+
+.post p {
+    margin: 0;
+    font-size: 16px;
+    color: #555;
+}
