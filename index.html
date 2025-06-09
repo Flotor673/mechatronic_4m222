@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <link rel="stylesheet" href="CSS.css">
-    <link rel="icon" type="image/x-icon" href="https://avatars.mds.yandex.net/get-mpic/11763878/2a0000018b28f88a0fddeee61759cef27a61/orig">
+    <link rel="icon" type="image/x-icon" href="img/img/ChatGPT Image 9 июн. 2025 г., 15_12_21.png">
     <title>Мехатроники</title>
     <script src="js.js"></script>
 </head>
@@ -12,7 +12,7 @@
     <header class="site-header">
         <div class="container">
             <div class="logo">
-                <img src="https://avatars.mds.yandex.net/get-mpic/11763878/2a0000018b28f88a0fddeee61759cef27a61/orig" alt="Логотип мехатроники" class="logo-img">
+                <img src="img/img/ChatGPT Image 9 июн. 2025 г., 15_12_21.png" alt="Логотип мехатроники" class="logo-img">
             </div>
             <div class="logo">
                 <h2>Мехатроники</h2>
@@ -33,6 +33,8 @@
                     <h1>Вопросы к экзамену</h1>
                     <li><a href="pdf/Вопросы_к_зачету_по_электротехнике_для_групп_3М11,_4М21,_4М22.pdf">По электротехнике</a></li>
                     <li><a href="pdf/Вопросы_к_зачету_по_основам_микроэлектроники.pdf">По микроэлектронике</a></li>
+                    <li><a href="pdf/Билеты для ОП Материаловедение.pdf">По материаловедение</a></li>
+                    <li><a href="pdf/Вопросы к контрольной работе по дисциплине.pdf">По компьютерному моделированию</a></li>
                     <h1>Разрабы</h1>
                     <li><a href="Developer1.html">Кирюха два уха</a></li>
                     <li><a href="Developer2.html">Мусик Ирек</a></li>
@@ -45,16 +47,36 @@
             <div class="toggle-btn" id="toggleBtn">☰</div>
         
         
-            <script>
-                const toggleBtn = document.getElementById('toggleBtn');
-                const sidebar = document.getElementById('sidebar');
-                const content = document.getElementById('content');
-        
-                toggleBtn.addEventListener('click', () => {
-                    sidebar.classList.toggle('open');
-                    content.classList.toggle('shifted');
-                });
-            </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('toggleBtn');
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            const body = document.body;
+
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                content.classList.toggle('shifted');
+                
+                // Для мобильных устройств - затемнение фона
+                if (sidebar.classList.contains('open')) {
+                    body.style.overflow = 'hidden';
+                } else {
+                    body.style.overflow = '';
+                }
+            });
+
+            // Закрытие сайдбара при клике вне его области
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('open') && 
+                    !sidebar.contains(e.target) && e.target !== toggleBtn) {
+                    sidebar.classList.remove('open');
+                    content.classList.remove('shifted');
+                    body.style.overflow = '';
+                }
+            });
+        });
+    </script>
     </header>
 
     <section class="news-section">
